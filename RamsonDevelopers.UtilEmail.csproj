@@ -10,6 +10,9 @@
 		<Company>Ramson Developers</Company>
 		<Copyright>Copyrights Ramson Developers @2023</Copyright>
 		<Description>A Wrapper Library for sending emails using SMTP library</Description>
+		<RepositoryUrl>https://github.com/AyushAher/RamsonDevelopers.UtilEmail</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>Email;UtilEmail;Ramson.developers;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
