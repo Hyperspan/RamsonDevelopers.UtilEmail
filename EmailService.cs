@@ -148,8 +148,16 @@ internal class EmailService : IEmailService
         mailMessage.IsBodyHtml = request.IsHtml;
         mailMessage.BodyEncoding = Encoding.UTF8;
 
-        var alternateViewFromString = AlternateView.CreateAlternateViewFromString(request.Body, Encoding.UTF8, "text/html");
-        mailMessage.AlternateViews.Add(alternateViewFromString);
+        if (!request.UseTemplate)
+        {
+            var alternateViewFromString = AlternateView.CreateAlternateViewFromString(request.Body, Encoding.UTF8, "text/html");
+            mailMessage.AlternateViews.Add(alternateViewFromString);
+        }
+        else
+        {
+            mailMessage.Body = request.Body;
+            mailMessage.IsBodyHtml = true;
+        }
 
         foreach (var altView in request.AlternateViews)
             mailMessage.AlternateViews.Add(altView);
