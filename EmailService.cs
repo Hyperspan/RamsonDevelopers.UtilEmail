@@ -150,8 +150,18 @@ internal class EmailService : IEmailService
 
         var alternateViewFromString = AlternateView.CreateAlternateViewFromString(request.Body, Encoding.UTF8, "text/html");
         mailMessage.AlternateViews.Add(alternateViewFromString);
+
+        foreach (var altView in request.AlternateViews)
+            mailMessage.AlternateViews.Add(altView);
+
         mailMessage.SubjectEncoding = Encoding.UTF8;
         mailMessage.BodyEncoding = Encoding.UTF8;
+
+
+        foreach (var variable in request.Variables)
+            request.Template += request.Template.Replace($"{{{variable.Name}}}", variable.Value);
+
+
     }
 
     /// <summary>

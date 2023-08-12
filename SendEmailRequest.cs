@@ -1,4 +1,7 @@
-﻿namespace RamsonDevelopers.UtilEmail;
+﻿using System.Net.Http.Headers;
+using System.Net.Mail;
+
+namespace RamsonDevelopers.UtilEmail;
 
 /// <summary>
 /// DTO for Sending an Email
@@ -25,6 +28,13 @@ public class SendEmailRequest
 
     public List<string> Attachments { get; set; }
 
+    public AlternateViewCollection AlternateViews { get; set; }
+
+    public List<EmailTemplateVariables> Variables { get; set; } = new();
+
+    public string Template { get; set; }
+    public bool UseTemplate { get; set; }
+
     public SendEmailRequest()
     {
         ToAddresses = new List<EMailAddress>();
@@ -32,6 +42,15 @@ public class SendEmailRequest
         BccAddresses = new List<EMailAddress>();
     }
 }
+
+
+
+public class EmailTemplateVariables
+{
+    public string Name { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
+}
+
 
 
 /// <summary>
