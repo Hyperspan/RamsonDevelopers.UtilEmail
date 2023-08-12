@@ -14,7 +14,7 @@ To use **RamsonDevelopers.UtilEmail** in your project, follow these steps:
     IConfiguration configuration = builder.Configuration;
     var emailConfig = configuration.GetSection(EmailConfig.SectionLabel);
     builder.Services.Configure<EmailConfig>(emailConfig);
-    builder.Services.AddEmailService(builder.Configuration);
+    builder.Services.AddEmailService();
 ```
 
 ## Usage
