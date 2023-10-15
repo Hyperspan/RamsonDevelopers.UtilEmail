@@ -2,6 +2,10 @@
 
 namespace RamsonDevelopers.UtilEmail;
 
+/// <summary>
+/// Extension class of IService collection for Dependency injection
+/// <see cref="IServiceCollection"/>
+/// </summary>
 public static class ServiceExtension
 {
     /// <summary>

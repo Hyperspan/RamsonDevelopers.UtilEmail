@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 
 namespace RamsonDevelopers.UtilEmail;
 
@@ -8,46 +7,93 @@ namespace RamsonDevelopers.UtilEmail;
 /// </summary>
 public class SendEmailRequest
 {
-    public EMailAddress? FromAddress { get; set; }
+    /// <summary>
+    /// Email address of the Sender <see cref="EmailAddress"/>
+    /// </summary>
+    public EmailAddress? FromAddress { get; set; }
 
-    public List<EMailAddress> ToAddresses { get; set; }
+    /// <summary>
+    /// List of email addresses to send email to. <see cref="EmailAddress"/>
+    /// </summary>
+    public List<EmailAddress> ToAddresses { get; set; }
 
-    public List<EMailAddress> CcAddresses { get; set; }
+    /// <summary>
+    /// List of email addresses to include in CC <see cref="EmailAddress"/>
+    /// </summary>
+    public List<EmailAddress> CcAddresses { get; set; }
 
-    public List<EMailAddress> BccAddresses { get; set; }
 
+    /// <summary>
+    /// List of email addresses to include in BCC <see cref="EmailAddress"/>
+    /// </summary>
+    public List<EmailAddress> BccAddresses { get; set; }
+
+    /// <summary>
+    /// The subject of the Email
+    /// </summary>
     public string Subject { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Body of the email message
+    /// </summary>
     public string Body { get; set; } = string.Empty;
 
+    /// <summary>
+    /// State weather the body is in HTML format
+    /// </summary>
     public bool IsHtml { get; set; } = true;
 
+    /// <summary>
+    /// Set the Email's Priority. <see cref="EMailPriority"/>
+    /// </summary>
     public EMailPriority Priority { get; set; } = EMailPriority.High;
 
-    public string EMailStateID { get; set; } = string.Empty;
+    /// <summary>
+    /// State Id
+    /// </summary>
+    public string EmailStateId { get; set; } = string.Empty;
 
-    public List<string> Attachments { get; set; }
+    /// <summary>
+    /// List of attachments to be shared with the email
+    /// </summary>
+    public List<string>? Attachments { get; set; }
 
-    public AlternateViewCollection AlternateViews { get; set; }
+    /// <summary>
+    /// Linked resources for the attachments. <see cref="LinkedResource"/>
+    /// </summary>
+    public List<LinkedResource> LinkedResources { get; set; } = new();
 
+    /// <summary>
+    /// List of values for all the variables present in the HTML template or message body.
+    /// <see cref="EmailTemplateVariables"/>
+    /// </summary>
     public List<EmailTemplateVariables> Variables { get; set; } = new();
 
-    public string Template { get; set; }
-    public bool UseTemplate { get; set; }
-
+    /// <summary>
+    /// Default constructor 
+    /// </summary>
     public SendEmailRequest()
     {
-        ToAddresses = new List<EMailAddress>();
-        CcAddresses = new List<EMailAddress>();
-        BccAddresses = new List<EMailAddress>();
+        ToAddresses = new List<EmailAddress>();
+        CcAddresses = new List<EmailAddress>();
+        BccAddresses = new List<EmailAddress>();
     }
 }
 
 
 
+/// <summary>
+/// Object for providing values to the variables present in the message body or HTML Template.
+/// </summary>
 public class EmailTemplateVariables
 {
+    /// <summary>
+    /// Name of the variable
+    /// </summary>
     public string Name { get; set; } = string.Empty;
+    /// <summary>
+    /// Value to replace the variable placeholder with
+    /// </summary>
     public string Value { get; set; } = string.Empty;
 }
 
@@ -56,21 +102,33 @@ public class EmailTemplateVariables
 /// <summary>
 /// The template or format of the Email address
 /// </summary>
-public class EMailAddress
+public class EmailAddress
 {
-    private string _name;
+    private string _name = string.Empty;
 
+
+    /// <summary>
+    /// Name of the person whose email address is provided
+    /// </summary>
     public string Name
     {
         get => string.IsNullOrEmpty(_name) ? Address : _name;
         set => _name = value;
     }
 
+    /// <summary>
+    /// Email address of the person
+    /// </summary>
     public string Address { get; set; }
 
-    public EMailAddress(string name, string address)
+    /// <summary>
+    /// Set the name and email address
+    /// </summary>
+    /// <param name="name">Name of the person</param>
+    /// <param name="address">Email Address of that person</param>
+    public EmailAddress(string name, string address)
     {
-        _name = name;
+        Name = name;
         Address = address;
     }
 }
@@ -80,7 +138,18 @@ public class EMailAddress
 /// </summary>
 public enum EMailPriority
 {
+    /// <summary>
+    /// set email priority to low
+    /// </summary>
     Low,
+
+    /// <summary>
+    /// set email priority to Medium
+    /// </summary>
     Medium,
+
+    /// <summary>
+    /// set email priority to HIGH
+    /// </summary>
     High,
 }

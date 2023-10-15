@@ -17,19 +17,21 @@ internal class EmailService : IEmailService
         _logger = logger;
     }
 
-    private EmailConfig _mailConfig { get; }
-    private ILogger<EmailService> _logger { get; }
+    private readonly EmailConfig _mailConfig;
+    private readonly ILogger<EmailService> _logger;
 
     /// <summary>
     /// Send the Email to users as per the parameters passed
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="request">
+    ///<see cref="SendEmailRequest"/>
+    /// </param>
     /// <returns></returns>
     public async Task<MailMessage> SendEMailAsync(SendEmailRequest request)
     {
         try
         {
-            _logger.LogDebug("Initialing EMail '" + request.EMailStateID + "'");
+            _logger.LogDebug("Initialing EMail '" + request.EmailStateId + "'");
             var mailMessage = new MailMessage();
             var eMailId = Guid.NewGuid();
 
@@ -56,17 +58,17 @@ internal class EmailService : IEmailService
 
             await Task.Factory.StartNew(() =>
             {
-                smtpClient.SendAsync(mailMessage, request.EMailStateID);
+                smtpClient.SendAsync(mailMessage, request.EmailStateId);
             });
 
-            _logger.LogDebug("Sending EMail '" + request.EMailStateID + "' has been attempted");
+            _logger.LogDebug("Sending EMail '" + request.EmailStateId + "' has been attempted");
 
             return mailMessage;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message, ex);
-            throw ex;
+            throw;
         }
     }
 
@@ -78,6 +80,7 @@ internal class EmailService : IEmailService
     /// <param name="mailMessage"></param>
     private void GenerateEMail(SendEmailRequest request, Guid eMailId, ref MailMessage mailMessage)
     {
+        mailMessage.Body = request.Body;
         mailMessage.Headers.Add("Message-ID", eMailId.ToString());
 
         if (!string.IsNullOrEmpty(_mailConfig.ReplyToAddress))
@@ -86,7 +89,7 @@ internal class EmailService : IEmailService
         mailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnSuccess;
 
         if (!string.IsNullOrEmpty(_mailConfig.ReplyToAddress))
-            mailMessage.ReplyTo = new MailAddress(_mailConfig.ReplyToAddress);
+            mailMessage.ReplyToList.Add(new MailAddress(_mailConfig.ReplyToAddress));
 
         mailMessage.From = new MailAddress(request.FromAddress?.Address ??
                                            _mailConfig.FromAddress, request.FromAddress?.Name ??
@@ -148,28 +151,18 @@ internal class EmailService : IEmailService
         mailMessage.IsBodyHtml = request.IsHtml;
         mailMessage.BodyEncoding = Encoding.UTF8;
 
-        if (!request.UseTemplate)
+        var alternateViewFromString = AlternateView.CreateAlternateViewFromString(mailMessage.Body, Encoding.UTF8, "text/html");
+        foreach (var resource in request.LinkedResources)
         {
-            var alternateViewFromString = AlternateView.CreateAlternateViewFromString(request.Body, Encoding.UTF8, "text/html");
-            mailMessage.AlternateViews.Add(alternateViewFromString);
-        }
-        else
-        {
-            mailMessage.Body = request.Body;
-            mailMessage.IsBodyHtml = true;
+            alternateViewFromString.LinkedResources.Add(resource);
         }
 
-        foreach (var altView in request.AlternateViews)
-            mailMessage.AlternateViews.Add(altView);
+        mailMessage.AlternateViews.Add(alternateViewFromString);
+
+        mailMessage.IsBodyHtml = true;
 
         mailMessage.SubjectEncoding = Encoding.UTF8;
         mailMessage.BodyEncoding = Encoding.UTF8;
-
-
-        foreach (var variable in request.Variables)
-            request.Template += request.Template.Replace($"{{{variable.Name}}}", variable.Value);
-
-
     }
 
     /// <summary>
@@ -180,6 +173,7 @@ internal class EmailService : IEmailService
     /// <returns>Returns the status of the Email</returns>
     private void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
     {
+        if (e.UserState == null) return;
         var userState = (string)e.UserState;
         if (e.Cancelled)
             _logger.LogWarning("[{0}] EMail Send canceled.", userState);
