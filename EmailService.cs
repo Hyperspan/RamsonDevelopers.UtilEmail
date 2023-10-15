@@ -20,6 +20,39 @@ internal class EmailService : IEmailService
     private readonly EmailConfig _mailConfig;
     private readonly ILogger<EmailService> _logger;
 
+
+    /// <summary>
+    /// Send Html Template message
+    /// </summary>
+    /// <param name="mailRequest"></param>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
+    public async Task<MailMessage> SendTemplateMessage(SendEmailRequest mailRequest)
+    {
+        try
+        {
+            if (!File.Exists(mailRequest.TemplatePath))
+            {
+                throw new FileNotFoundException("Template not found.", mailRequest.TemplatePath);
+            }
+
+            var template = await File.ReadAllTextAsync(mailRequest.TemplatePath);
+
+            template = mailRequest.Variables.Aggregate(template, (current, variable)
+                            => current.Replace("{{" + variable.Name + "}}", variable.Value));
+
+            mailRequest.Body = template;
+
+            return await SendEMailAsync(mailRequest);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            throw;
+        }
+    }
+
+
     /// <summary>
     /// Send the Email to users as per the parameters passed
     /// </summary>
