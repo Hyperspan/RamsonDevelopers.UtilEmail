@@ -1,8 +1,3 @@
-## Note
-I am still a newbie in the open source world and would appreciate if any on would help making this library better. Just by creating a new issue you are doing a lot.
-
-**Regards Ayush Aher.**
-
 ----
 
 # RamsonDevelopers.UtilEmail
@@ -47,20 +42,20 @@ To send emails using **RamsonDevelopers.UtilEmail**, follow these steps:
        "ReplyToAddress" : "your-reply-to-address"
    }
    ```
-2. Create an instance of [SendEmailRequest](https://github.com/AyushAher/RamsonDevelopers.UtilEmail/blob/main/SendEmailRequest.cs) class and configure appropriate values
+2. Create an instance of [SendEmailRequest](https://github.com/Hyperspan/RamsonDevelopers.UtilEmail/blob/main/SendEmailRequest.cs) class and configure appropriate values
 
-3. Create an instance of [IEmailService](https://github.com/AyushAher/RamsonDevelopers.UtilEmail/blob/main/IEmailService.cs) through dependency injection.
+3. Create an instance of [IEmailService](https://github.com/Hyperspan/RamsonDevelopers.UtilEmail/blob/main/IEmailService.cs) through dependency injection.
 
 4. Invoke ```SendEMailAsync``` Method inside the ```EmailService``` and pass the request object.
 
 ----
 ##  Credits
 
-**RamsonDevelopers.UtilEmail** was developed by [Ayush Aher](https://www.linkedin.com/in/ayushaher118/) and is maintained by **Ramson Developers**. We would like to acknowledge the contributions of the open-source community and express our gratitude to all the contributors who helped make this project possible.
+**RamsonDevelopers.UtilEmail** was developed by [Ayush Aher](https://ayush.ramson-developers.com) and is maintained by **Ramson Developers**. We would like to acknowledge the contributions of the open-source community and express our gratitude to all the contributors who helped make this project possible.
 
 ----
 
 ## Feedback
 
-If you have any feedback, please reach out to us at [developers.ramson@gmail.com](mailto:developers.ramson@gmail.com)
-or [Raise a Issue](https://github.com/AyushAher/RamsonDevelopers.UtilEmail/issues) in [Github Repository](https://github.com/AyushAher/RamsonDevelopers.UtilEmail)
+If you have any feedback, please reach out to us at [info@ramson-developers.com](mailto:info@ramson-developers.com)
+or [Raise a Issue](https://github.com/Hyperspan/RamsonDevelopers.UtilEmail/issues) in [Github Repository](https://github.com/Hyperspan/RamsonDevelopers.UtilEmail)
