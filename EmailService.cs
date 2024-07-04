@@ -8,22 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace RamsonDevelopers.UtilEmail
 {
+    /// <inheritdoc />
     public class EmailService : IEmailService
     {
-        public EmailService(
-            ILogger<EmailService> logger,
-            IOptions<EmailConfig> appConfig)
+        /// <inheritdoc />
+        public EmailService(IOptions<EmailConfig> appConfig)
         {
             _mailConfig = appConfig.Value;
-            _logger = logger;
+        }
+
+        /// <inheritdoc />
+        public EmailService(EmailConfig appConfig)
+        {
+            _mailConfig = appConfig;
         }
 
         private readonly EmailConfig _mailConfig;
-        private readonly ILogger<EmailService> _logger;
-
 
         /// <summary>
         /// Send Html Template message
@@ -51,7 +55,7 @@ namespace RamsonDevelopers.UtilEmail
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                Log.Error(e, e.Message);
                 throw;
             }
         }
@@ -68,7 +72,7 @@ namespace RamsonDevelopers.UtilEmail
         {
             try
             {
-                _logger.LogDebug("Initialing EMail '" + request.EmailStateId + "'");
+                Log.Debug("Initialing EMail '" + request.EmailStateId + "'");
                 var mailMessage = new MailMessage();
                 var eMailId = Guid.NewGuid();
 
@@ -95,13 +99,13 @@ namespace RamsonDevelopers.UtilEmail
 
                 await Task.Factory.StartNew(() => { smtpClient.SendAsync(mailMessage, request.EmailStateId); });
 
-                _logger.LogDebug("Sending EMail '" + request.EmailStateId + "' has been attempted");
+                Log.Debug("Sending EMail '" + request.EmailStateId + "' has been attempted");
 
                 return mailMessage;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                Log.Error(ex.Message, ex);
                 throw;
             }
         }
@@ -212,11 +216,11 @@ namespace RamsonDevelopers.UtilEmail
             if (e.UserState == null) return;
             var userState = (string)e.UserState;
             if (e.Cancelled)
-                _logger.LogWarning("[{0}] EMail Send canceled.", userState);
+                Log.Warning("[{0}] EMail Send canceled.", userState);
             if (e.Error != null)
-                _logger.LogError("[{0}] Send EMail Failed : {1}", userState, e.Error.ToString());
+                Log.Error("[{0}] Send EMail Failed : {1}", userState, e.Error.ToString());
             else
-                _logger.LogInformation("[{0}] Message sent.", userState);
+                Log.Information("[{0}] Message sent.", userState);
         }
     }
 }
