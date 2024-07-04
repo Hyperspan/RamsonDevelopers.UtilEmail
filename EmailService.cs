@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace RamsonDevelopers.UtilEmail
 {
-    internal class EmailService : IEmailService
+    public class EmailService : IEmailService
     {
         public EmailService(
             ILogger<EmailService> logger,
