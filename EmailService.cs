@@ -183,7 +183,7 @@ namespace RamsonDevelopers.UtilEmail
             if (request.Attachments != null)
             {
                 foreach (var attachment in request.Attachments)
-                    mailMessage.Attachments.Add(new Attachment(attachment));
+                    mailMessage.Attachments.Add(attachment);
             }
 
             // Set if the body is in html format

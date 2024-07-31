@@ -60,7 +60,7 @@ namespace RamsonDevelopers.UtilEmail
         /// <summary>
         /// List of attachments to be shared with the email
         /// </summary>
-        public List<string> Attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
 
         /// <summary>
         /// Linked resources for the attachments. <see cref="LinkedResource"/>
