@@ -6,7 +6,6 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog;
 
@@ -60,6 +59,58 @@ namespace RamsonDevelopers.UtilEmail
             }
         }
 
+        /// <summary>
+        /// Test SMTP settings
+        /// </summary>
+        /// <param name="request">
+        /// <see cref="SendEmailRequest"/>
+        /// </param>
+        /// <param name="config">
+        /// <see cref="SendEmailRequest"/>
+        /// </param>
+        /// <returns></returns>
+        public async Task<MailMessage> TestSmtpConnection(EmailConfig config, SendEmailRequest request)
+        {
+            try
+            {
+                Log.Debug("Initialing EMail '" + request.EmailStateId + "'");
+                var mailMessage = new MailMessage();
+                var eMailId = Guid.NewGuid();
+
+                GenerateEMail(request, eMailId, ref mailMessage);
+
+                var smtpClient = new SmtpClient(config.Server, config.Port)
+                {
+                    EnableSsl = config.UseSsl
+                };
+
+                if (string.IsNullOrEmpty(config.UserName))
+                {
+                    smtpClient.UseDefaultCredentials = true;
+                }
+                else
+                {
+                    smtpClient.UseDefaultCredentials = false;
+                    smtpClient.Credentials = new NetworkCredential(config.UserName, config.Password);
+                }
+
+                if (!string.IsNullOrEmpty(config.TargetName)) smtpClient.TargetName = config.TargetName;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Timeout = 600000;
+                smtpClient.SendCompleted += SendCompletedCallback;
+
+                smtpClient.Send(mailMessage);
+
+                Log.Debug("Sending EMail '" + request.EmailStateId + "' has been attempted");
+
+                return mailMessage;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message, ex);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Send the Email to users as per the parameters passed
@@ -222,5 +273,6 @@ namespace RamsonDevelopers.UtilEmail
             else
                 Log.Information("[{0}] Message sent.", userState);
         }
+
     }
 }
